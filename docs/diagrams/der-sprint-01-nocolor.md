@@ -41,18 +41,11 @@ erDiagram
     }
 
 
-   
+    
 
     PESSOA }|--|| ENDERECO : "possui"
     PESSOA_JURIDICA }|--|| ENDERECO : "possui"
     PESSOA ||--o{ USUARIO : "pode ser um"
     PESSOA ||--o{ DOADOR : "pode ser um"
     PESSOA_JURIDICA ||--o{ DOADOR : "pode ser uma"
-
-    classDef base fill:#B3E5FC,stroke:#01579B,stroke-width:2px,color:black
-    classDef roles fill:#C8E6C9,stroke:#1B5E20,stroke-width:2px,color:black
-    classDef transactions fill:#FFF9C4,stroke:#FF6F00,stroke-width:2px,color:black
-    class PESSOA,PESSOA_JURIDICA,ENDERECO base
-    class USUARIO,DOADOR,CRIANCA roles
-    class DOACAO,DOCUMENTO transactions
 ```
