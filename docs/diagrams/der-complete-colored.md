@@ -1,3 +1,4 @@
+```mermaid
 erDiagram
 
     PESSOA {
@@ -78,3 +79,4 @@ erDiagram
     class PESSOA,PESSOA_JURIDICA,ENDERECO base
     class USUARIO,DOADOR,CRIANCA roles
     class DOACAO,DOCUMENTO transactions
+```
