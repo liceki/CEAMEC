@@ -1,113 +1,38 @@
-# -----------------------------
-# Extensões de vídeos (comuns e menos comuns)
-# -----------------------------
-*.mp4
-*.mkv
-*.avi
-*.mov
-*.wmv
-*.flv
-*.webm
-*.mpeg
-*.mpg
-*.m4v
-*.3gp
-*.3g2
-*.mts
-*.vob
-*.ogv
-*.ts
-*.m2ts
-*.rm
-*.rmvb
-*.f4v
-*.svi
-*.divx
-
-# -----------------------------
-# Arquivos temporários/sistema
-# -----------------------------
-*.tmp
-*.temp
-*.swp
-.DS_Store
-Thumbs.db
-ehthumbs.db
-desktop.ini
-
-# -----------------------------
-# Arquivos de IDEs e editores
-# -----------------------------
-.vscode/
-.idea/
-*.code-workspace
-
-# -----------------------------
-# Arquivos de build e binários
-# -----------------------------
-*.exe
-*.out
-*.class
-*.pyc
-*.o
-*.obj
-*.dll
-*.so
-*.log
-
-# -----------------------------
-# Arquivos de backup
-# -----------------------------
-*~
-*.bak
-*.old
-
-# -----------------------------
-# Jupyter Notebooks checkpoints
-# -----------------------------
-.ipynb_checkpoints/
-
-# -----------------------------
-# Arquivos Latex temporários
-# -----------------------------
-*.aux
-*.bbl
-*.blg
-*.brf
-*.idx
-*.ilg
-*.ind
-*.lof
-*.log
-*.lot
-*.out
-*.toc
-*.acn
-*.acr
-*.alg
-*.glg
-*.glo
-*.gls
-*.ist
-*.fls
-*.fdb_latexmk
-*.synctex.gz
-
-
-# Arquivos e pastas gerados pelo Maven
+# Arquivos de Build e Dependências do Maven
 /target/
+!.mvn/wrapper/maven-wrapper.jar
 
-# Arquivos de log
+# Logs
 *.log
+logs/
 
-# Arquivos gerados por IDEs
+# Arquivos de IDE
 .idea/
 *.iml
 *.iws
-.project
 .classpath
+.project
 .settings/
-
-# Arquivos do sistema operacional
 .DS_Store
+
+# Arquivos gerados pelo sistema operacional
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Arquivos de configuração de execução do Spring Boot
+.spring-boot-devtools.properties
+
+# Arquivos temporários e de cache
+*.tmp
+*.swp
+*~
+
+# Arquivos de ambiente com informações sensíveis
+.env
+*.properties
+
+# Relatórios de build e testes
+/build/
+/out/
+/coverage/

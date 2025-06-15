@@ -1,13 +1,13 @@
-package br.org.ceamec.ceamec_api;
+package com.ifmg.ceamec;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CeamecApiApplicationTests {
+class CeamecApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
 }
