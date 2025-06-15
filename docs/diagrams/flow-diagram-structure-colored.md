@@ -1,4 +1,4 @@
-
+```mermaid
 graph TD;
     subgraph Interface_do_Usuario
         A[View - Telas Swing];
@@ -33,3 +33,4 @@ graph TD;
     class B,C logicStyle
     class D,E dataStyle
     class F dbStyle
+```
