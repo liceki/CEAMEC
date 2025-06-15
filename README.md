@@ -114,7 +114,7 @@ Este diagrama mostra as principais entidades do sistema e como elas se relaciona
 erDiagram
 
     %% --- Entidades de Base ---
-    
+
     PESSOA {
         int id_pessoa PK "🔑 ID único para cada indivíduo"
         string nome_completo "Nome completo do indivíduo"
@@ -159,6 +159,8 @@ erDiagram
         int id_doacao PK "🔑 ID da doação"
         int id_doador FK "🔗 Doador que realizou"
         datetime data_hora "Data e hora da doação"
+        string tipo_doacao "Ex: Dinheiro, Alimentos, Roupas"
+        decimal valor "Valor monetário (se aplicável)"
         string comprovante_url "🔗 URL do comprovante (PDF, JPG)"
     }
 
@@ -174,12 +176,11 @@ erDiagram
     PESSOA ||--o| USUARIO : "pode ser um"
     PESSOA ||--o| DOADOR : "pode ser um"
     PESSOA ||--o| CRIANCA : "pode ser uma"
-    
+
     PESSOA_JURIDICA ||--o| DOADOR : "pode ser uma"
-    
+
     DOADOR ||--o{ DOACAO : "realiza"
     CRIANCA ||--o{ DOCUMENTO : "possui"
-    
 ```
 
 ## 🤝 Contribuição
