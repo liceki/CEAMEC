@@ -1,3 +1,4 @@
+``` mermaid
 erDiagram
 
     %% --- Entidades de Base ---
@@ -68,3 +69,4 @@ erDiagram
 
     DOADOR ||--o{ DOACAO : "realiza"
     CRIANCA ||--o{ DOCUMENTO : "possui"
+```
