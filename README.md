@@ -113,45 +113,53 @@ Este diagrama mostra as principais entidades do sistema e como elas se relaciona
 ```mermaid
 erDiagram
 
-    %% --- Definição das Entidades ---
-
+    %% --- Entidades de Base ---
+    
     PESSOA {
         int id_pessoa PK "🔑 ID único para cada indivíduo"
         string nome_completo "Nome completo do indivíduo"
-        string cpf "CPF do indivíduo (único)"
-        string email "Email principal do indivíduo"
+        string cpf "CPF do indivíduo (pode ser nulo inicialmente)"
+        string email "Email principal (pode ser nulo)"
+        date data_nascimento "Data de nascimento"
     }
 
     PESSOA_JURIDICA {
         int id_pj PK "🔑 ID único para cada pessoa jurídica"
         string cnpj "CNPJ da empresa (único)"
         string razao_social "Razão Social da empresa"
+        string email_contato "Email de contato da empresa"
     }
 
+    %% --- Entidades de Papel/Contexto ---
+
     USUARIO {
-        int id_usuario PK "🔑 ID único para o registro de usuário"
-        int id_pessoa FK "🔗 Pessoa que tem o acesso"
+        int id_usuario PK "🔑 ID único do registro de usuário"
+        int id_pessoa FK "🔗 Link para a pessoa que tem o acesso"
         string login "Login de acesso ao sistema"
         string senha_hash "Senha criptografada"
     }
 
     DOADOR {
-        int id_doador PK "🔑 ID único para o registro de doador"
-        int id_pessoa FK "🔗 (Opcional) Pessoa física"
-        int id_pj FK "🔗 (Opcional) Pessoa jurídica"
+        int id_doador PK "🔑 ID único do registro de doador"
+        int id_pessoa FK "🔗 (Opcional) Link se o doador for pessoa física"
+        int id_pj FK "🔗 (Opcional) Link se o doador for empresa"
     }
+
+    CRIANCA {
+        int id_crianca PK "🔑 ID do registro da criança no orfanato"
+        int id_pessoa FK "🔗 Link para os dados pessoais da criança"
+        string status "Ex: Acolhida, Em processo de adoção"
+        string foto_perfil_url "🔗 URL da foto de perfil"
+        text historico_medico "Informações médicas relevantes"
+    }
+
+    %% --- Entidades Transacionais ---
 
     DOACAO {
         int id_doacao PK "🔑 ID da doação"
         int id_doador FK "🔗 Doador que realizou"
         datetime data_hora "Data e hora da doação"
         string comprovante_url "🔗 URL do comprovante (PDF, JPG)"
-    }
-
-    CRIANCA {
-        int id_crianca PK "🔑 ID único da criança"
-        string nome_completo "Nome da criança"
-        string foto_perfil_url "🔗 URL da foto de perfil"
     }
 
     DOCUMENTO {
@@ -163,9 +171,12 @@ erDiagram
 
     %% --- Relacionamentos ---
 
-    PESSOA ||--|{ USUARIO : "pode ser um"
-    PESSOA ||--o{ DOADOR : "pode ser um"
-    PESSOA_JURIDICA ||--o{ DOADOR : "pode ser uma"
+    PESSOA ||--o| USUARIO : "pode ser um"
+    PESSOA ||--o| DOADOR : "pode ser um"
+    PESSOA ||--o| CRIANCA : "pode ser uma"
+    
+    PESSOA_JURIDICA ||--o| DOADOR : "pode ser uma"
+    
     DOADOR ||--o{ DOACAO : "realiza"
     CRIANCA ||--o{ DOCUMENTO : "possui"
     
