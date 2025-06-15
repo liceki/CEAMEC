@@ -92,3 +92,22 @@ desktop.ini
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+
+
+# Arquivos e pastas gerados pelo Maven
+/target/
+
+# Arquivos de log
+*.log
+
+# Arquivos gerados por IDEs
+.idea/
+*.iml
+*.iws
+.project
+.classpath
+.settings/
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
