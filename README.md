@@ -10,8 +10,9 @@ A aplicação está sendo construída com uma interface de usuário simples e fu
 
 ## ✨ Funcionalidades Planejadas
 
-O sistema visa cobrir as seguintes áreas em seu desenvolvimento inicial:
+O sistema visa cobrir as seguintes áreas em seu desenvolvimento:
 
+-   [ ] **Autenticação:** Tela de login para acesso administrativo ao sistema.
 -   [ ] **Gestão de Doadores:** CRUD (Criar, Ler, Atualizar, Deletar) completo para o cadastro de pessoas físicas e jurídicas que apoiam a ONG.
 -   [ ] **Gestão de Crianças:** Controle de informações das crianças acolhidas, como dados pessoais, data de chegada e situação atual.
 -   [ ] **Registro de Doações:** Lançamento de doações recebidas (financeiras ou de itens), vinculando-as a um doador e registrando a data e o tipo de doação.
@@ -27,8 +28,7 @@ A pilha de tecnologia para este projeto foi escolhida para combinar robustez, pr
 -   **Interface Gráfica (UI):** Java Swing
     -   **Look and Feel:** [FlatLaf](https://www.formdev.com/flatlaf/) para uma aparência moderna.
     -   **Builder:** NetBeans GUI Builder
--   **Banco de Dados (Desenvolvimento):** H2 Database (em memória)
--   **Banco de Dados (Produção):** A ser definido (MySQL/PostgreSQL)
+-   **Banco de Dados (Desenvolvimento):** MySQL
 -   **Build & Dependências:** Apache Maven
 -   **Utilitários:** Lombok
 
@@ -37,7 +37,7 @@ A pilha de tecnologia para este projeto foi escolhida para combinar robustez, pr
 Antes de começar, garanta que você tenha as seguintes ferramentas instaladas em seu ambiente de desenvolvimento:
 
 -   [JDK (Java Development Kit)](https://www.oracle.com/java/technologies/downloads/) - Versão 17 ou superior.
--   [Apache Maven](https://maven.apache.org/download.cgi) - Para gerenciamento de dependências.
+-   [Apache Maven](https://maven.apache.org/download/cgi) - Para gerenciamento de dependências.
 -   [Git](https://git-scm.com/) - Para controle de versão.
 -   [Apache NetBeans](https://netbeans.apache.org/download/index.html) - IDE recomendada devido ao uso do GUI Builder.
 
@@ -53,7 +53,7 @@ Siga os passos abaixo para executar a aplicação localmente:
 
 2.  **Abra o projeto no NetBeans:**
     -   Vá em `Arquivo > Abrir Projeto...`.
-    -   Selecione a pasta `gestao-ceamec` que você clonou.
+    -   Selecione a pasta `CEAMEC` que você clonou.
     -   Aguarde o NetBeans carregar o projeto e o Maven baixar todas as dependências (pode levar alguns minutos na primeira vez).
 
 3.  **Execute a aplicação:**
@@ -71,6 +71,80 @@ O projeto segue uma arquitetura de camadas bem definida para garantir a separaç
     -   `service/`: Camada de serviço, onde reside toda a lógica de negócio da aplicação.
     -   `model/`: As entidades JPA que mapeiam as tabelas do banco de dados (ex: `Doador`, `Crianca`).
     -   `repository/`: Interfaces do Spring Data JPA para acesso e manipulação do banco de dados.
+
+## 📊 Diagramas
+
+Esta seção contém diagramas que ilustram a arquitetura e o modelo de dados do projeto.
+
+### Arquitetura de Camadas
+
+O sistema segue uma arquitetura de camadas clássica para garantir a separação de responsabilidades.
+
+```mermaid
+graph TD;
+    subgraph Interface_do_Usuario
+        A[View - Telas Swing];
+    end
+    subgraph Logica_de_Negocio
+        B[Service - Regras de Negócio];
+        C[DTO - Data Transfer Objects];
+    end
+    subgraph Acesso_a_Dados
+        D[Repository - Spring Data JPA];
+        E[Model - Entidades JPA];
+    end
+    subgraph Banco_de_Dados
+        F[Database - MySQL];
+    end
+
+    A -- Usa --> C;
+    A -- Chama --> B;
+    B -- Usa --> C;
+    B -- Chama --> D;
+    D -- Usa --> E;
+    D -- Interage com --> F;
+
+```
+
+### Modelo de Dados (Entidade-Relacionamento)
+
+Este diagrama mostra as principais entidades do sistema e como elas se relacionam.
+
+```mermaid
+erDiagram
+    USUARIO {
+        Long id PK
+        String usuario
+        String senha
+    }
+
+    DOADOR {
+        Long id PK
+        String nome
+        String cpfCnpj
+        String telefone
+        String email
+    }
+
+    DOACAO {
+        Long id PK
+        LocalDate data
+        Double valor
+        String descricao
+        Long doador_id FK
+    }
+
+    CRIANCA {
+        Long id PK
+        String nomeCompleto
+        LocalDate dataNascimento
+        String situacao
+    }
+
+    DOADOR ||--|{ DOACAO : "realiza"
+
+    
+```
 
 ## 🤝 Contribuição
 
