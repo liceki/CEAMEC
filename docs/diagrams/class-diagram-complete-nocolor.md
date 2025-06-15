@@ -1,3 +1,4 @@
+```mermaid
 classDiagram
     direction LR
 
@@ -79,3 +80,4 @@ classDiagram
 
     IDoador "1" -- "0..*" Doacao : "realiza >"
     Crianca "1" --> "0..*" Documento : "possui >"
+```
