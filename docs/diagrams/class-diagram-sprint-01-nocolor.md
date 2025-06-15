@@ -46,38 +46,13 @@ classDiagram
         +autenticar(senha): boolean
     }
 
-    class Crianca {
-        <<Entity>>
-        -fotoPerfilUrl: String
-        -historicoMedico: String
-        +adicionarDocumento(doc): void
-    }
-
-    class Doacao {
-        <<Entity>>
-        -id: int
-        -dataHora: Datetime
-        -valor: double
-        -comprovanteUrl: String
-    }
-    
-    class Documento {
-        <<Entity>>
-        -id: int
-        -tipoDocumento: String
-        -documentoUrl: String
-    }
-
     Pessoa "1" *-- "1" Endereco
     PessoaJuridica "1" *-- "1" Endereco
 
     Pessoa <|-- PessoaFisica
     PessoaFisica <|-- Usuario
-    PessoaFisica <|-- Crianca
     
     PessoaFisica ..|> IDoador
     PessoaJuridica ..|> IDoador
 
-    IDoador "1" -- "0..*" Doacao : "realiza >"
-    Crianca "1" --> "0..*" Documento : "possui >"
 ```

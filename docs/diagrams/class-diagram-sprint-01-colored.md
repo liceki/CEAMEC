@@ -1,8 +1,7 @@
-```mermaid
 classDiagram
     direction LR
 
-    class Pessoa {
+    class Pessoa:::base {
         <<Abstract>>
         -id: int
         -nomeCompleto: String
@@ -10,19 +9,19 @@ classDiagram
         -endereco: Endereco
     }
 
-    class PessoaFisica {
+    class PessoaFisica:::base {
         +cpf: String
         +dataNascimento: Date
     }
 
-    class PessoaJuridica {
+    class PessoaJuridica:::base {
         +id_pj: int
         +cnpj: String
         +razaoSocial: String
         -endereco: Endereco
     }
 
-    class Endereco {
+    class Endereco:::base {
         -id: int
         -logradouro: String
         -numero: String
@@ -33,39 +32,17 @@ classDiagram
         -cep: String
     }
 
-    class IDoador {
+    class IDoador:::interface{
         <<Interface>>
         +realizarDoacao(doacao): void
         +getHistoricoDoacoes(): List~Doacao~
     }
 
-    class Usuario {
+    class Usuario:::entities {
         <<Entity>>
         -login: String
         -senhaHash: String
         +autenticar(senha): boolean
-    }
-
-    class Crianca {
-        <<Entity>>
-        -fotoPerfilUrl: String
-        -historicoMedico: String
-        +adicionarDocumento(doc): void
-    }
-
-    class Doacao {
-        <<Entity>>
-        -id: int
-        -dataHora: Datetime
-        -valor: double
-        -comprovanteUrl: String
-    }
-    
-    class Documento {
-        <<Entity>>
-        -id: int
-        -tipoDocumento: String
-        -documentoUrl: String
     }
 
     Pessoa "1" *-- "1" Endereco
@@ -73,11 +50,11 @@ classDiagram
 
     Pessoa <|-- PessoaFisica
     PessoaFisica <|-- Usuario
-    PessoaFisica <|-- Crianca
     
     PessoaFisica ..|> IDoador
     PessoaJuridica ..|> IDoador
+    
+    classDef base fill:#BBDEFB,stroke:#0D47A1,stroke-width:2px,color:black
+    classDef interface fill:#E1BEE7,stroke:#4A148C,stroke-width:2px,color:black
+    classDef entities fill:#C8E6C9,stroke:#1B5E20,stroke-width:2px,color:black
 
-    IDoador "1" -- "0..*" Doacao : "realiza >"
-    Crianca "1" --> "0..*" Documento : "possui >"
-```
