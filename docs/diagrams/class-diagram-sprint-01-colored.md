@@ -1,3 +1,4 @@
+```mermaid
 classDiagram
     direction LR
 
@@ -57,4 +58,4 @@ classDiagram
     classDef base fill:#BBDEFB,stroke:#0D47A1,stroke-width:2px,color:black
     classDef interface fill:#E1BEE7,stroke:#4A148C,stroke-width:2px,color:black
     classDef entities fill:#C8E6C9,stroke:#1B5E20,stroke-width:2px,color:black
-
+```
