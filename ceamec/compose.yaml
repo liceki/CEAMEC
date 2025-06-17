@@ -1,10 +1,36 @@
+# Arquivo: docker-compose.yml (na raiz do projeto)
+version: '3.8'
 services:
-  mysql:
-    image: 'mysql:latest'
+  db:
+    image: mysql:8.0
+    container_name: mysql-ceamec-db
+    restart: always
     environment:
-      - 'MYSQL_DATABASE=mydatabase'
-      - 'MYSQL_PASSWORD=secret'
-      - 'MYSQL_ROOT_PASSWORD=verysecret'
-      - 'MYSQL_USER=myuser'
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ceamec_db
     ports:
-      - '3306'
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  app:
+    image: openjdk:17-jdk-slim
+    container_name: spring-ceamec-app
+    restart: on-failure
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+      - "5005:5005" # Porta para o depurador
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/ceamec_db?useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    command: ./mvnw spring-boot:run
+
+volumes:
+  mysql-data:
