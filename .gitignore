@@ -30,7 +30,7 @@ Desktop.ini
 
 # Arquivos de ambiente com informações sensíveis
 .env
-*.properties
+#*.properties
 
 # Relatórios de build e testes
 /build/
