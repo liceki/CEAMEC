@@ -14,24 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.swing.*;
 
-//@SpringBootApplication
-//public class CeamecApplication {
-//
-//    public static void main(String[] args) {
-//
-//        new SpringApplicationBuilder(CeamecApplication.class)
-//                .headless(false)
-//                .web(WebApplicationType.NONE)
-//                .run(args);
-//
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new TelaLogin().setVisible(true);
-//            }
-//        });
-//    }
-//
-//}
 
 @SpringBootApplication
 public class CeamecApplication {
