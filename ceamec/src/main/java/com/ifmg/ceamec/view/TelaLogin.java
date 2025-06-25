@@ -64,7 +64,7 @@ public class TelaLogin extends JFrame {
         campoSenha.setText("admin123");
     }
 
-    // Este método integra a View com o Service/Security para validar as credenciais
+    // Este metodo integra a View com o Service/Security para validar as credenciais
     private void autenticar() {
         String login = campoLogin.getText();
         String senha = new String(campoSenha.getPassword());

@@ -1,9 +1,6 @@
 package com.ifmg.ceamec.view;
 
-// Pacote: com.ceamec.orfanato.view
-
-import com.ifmg.ceamec.CeamecApplication;
-import org.springframework.context.ConfigurableApplicationContext;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 import javax.swing.*;
 import java.awt.*;
@@ -11,87 +8,76 @@ import java.awt.*;
 @Component
 public class MainFrame extends JFrame {
 
+    // Gerenciador de layout que mostra um painel por vez
     private final CardLayout cardLayout;
     private final JPanel mainPanel;
 
-    // Injeção de dependências de todos os painéis que este frame irá gerenciar
-    //private final PainelGestaoDoador painelGestaoDoador;
-    // private final PainelGestaoCrianca painelGestaoCrianca; // Seria injetado na Sprint 2
-    // private final PainelRegistroDoacao painelRegistroDoacao; // Seria injetado na Sprint 2
+    // --- Injeção de Dependências dos Painéis ---
+    // O Spring irá fornecer a instância de PainelGestaoDoador aqui.
+    private final PainelGestaoDoador painelGestaoDoador;
 
-    private final ConfigurableApplicationContext springContext;
+    // Outros painéis para Sprints futuras seriam injetados aqui também
+    // private final PainelGestaoCrianca painelGestaoCrianca;
 
-    public MainFrame(/*PainelGestaoDoador painelGestaoDoador,*/ ConfigurableApplicationContext springContext) {
-        //this.painelGestaoDoador = painelGestaoDoador;
-        this.springContext = springContext;
-        // this.painelGestaoCrianca = painelGestaoCrianca; // Exemplo para o futuro
+    // Construtor que recebe os painéis gerenciados pelo Spring
+    public MainFrame(PainelGestaoDoador painelGestaoDoador) {
+        this.painelGestaoDoador = painelGestaoDoador;
 
         this.cardLayout = new CardLayout();
         this.mainPanel = new JPanel(cardLayout);
-
-        initUI();
     }
 
+    // @PostConstruct garante que este metodo seja chamado após a injeção de todas as dependências
+    @PostConstruct
     private void initUI() {
         setTitle("Sistema de Gestão CEAMEC");
         setSize(1024, 768);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        // Adiciona os painéis ao CardLayout com um nome único para cada um
-        mainPanel.add(new JPanel(), "VAZIO"); // Um painel vazio para o início
-        //mainPanel.add(painelGestaoDoador, "GESTAO_DOADORES");
-        // mainPanel.add(painelGestaoCrianca, "GESTAO_CRIANCAS"); // Adicionado na Sprint 2
-        // mainPanel.add(painelRegistroDoacao, "REGISTRO_DOACOES"); // Adicionado na Sprint 2
+        // --- PASSO 2: ADICIONAR O PAINEL AO CARDLAYOUT ---
+        // Adiciona um painel vazio como tela inicial
+        mainPanel.add(createWelcomePanel(), "TELA_INICIAL");
 
+        // Adiciona o painel de gestão de doadores com um nome único ("ID")
+        mainPanel.add(painelGestaoDoador, "PAINEL_DOADORES");
+
+        // Outros painéis seriam adicionados aqui no futuro
+        // mainPanel.add(painelGestaoCriancas, "PAINEL_CRIANCAS");
+
+        // Configura a barra de menu
         setJMenuBar(createMenuBar());
+
+        // Define o painel com CardLayout como o conteúdo principal da janela
         setContentPane(mainPanel);
     }
 
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-
-        // --- Menu Cadastros ---
         JMenu menuCadastros = new JMenu("Cadastros");
         menuBar.add(menuCadastros);
 
-        JMenuItem itemGestaoDoadores = new JMenuItem("Gestão de Doadores");
-        itemGestaoDoadores.addActionListener(e -> cardLayout.show(mainPanel, "GESTAO_DOADORES"));
+        // --- PASSO 3: ATIVAR O ITEM DE MENU ---
+        JMenuItem itemGestaoDoadores = new JMenuItem("Gerenciar Doadores");
+
+        // A ação deste item de menu é mostrar o painel correspondente no CardLayout
+        itemGestaoDoadores.addActionListener(e -> cardLayout.show(mainPanel, "PAINEL_DOADORES"));
+
         menuCadastros.add(itemGestaoDoadores);
 
-        // Exemplo de como seriam os próximos itens
-        JMenuItem itemGestaoCriancas = new JMenuItem("Gestão de Crianças");
-        // itemGestaoCriancas.addActionListener(e -> cardLayout.show(mainPanel, "GESTAO_CRIANCAS"));
-        menuCadastros.add(itemGestaoCriancas);
+        // ... aqui viriam outros itens de menu para Crianças, Doações, etc.
 
-        JMenuItem itemRegistroDoacoes = new JMenuItem("Registro de Doações");
-        // itemRegistroDoacoes.addActionListener(e -> cardLayout.show(mainPanel, "REGISTRO_DOACOES"));
-        menuCadastros.add(itemRegistroDoacoes);
-
-        // --- Menu Sistema ---
-        JMenu menuSistema = new JMenu("Sistema");
-        menuBar.add(menuSistema);
-
-        JMenuItem itemLogout = new JMenuItem("Sair (Logout)");
-        itemLogout.addActionListener(e -> logout());
-        menuSistema.add(itemLogout);
+        // (A lógica de Logout, se existir, ficaria em outro menu, como "Sistema")
 
         return menuBar;
     }
 
-    private void logout() {
-        // Exibe uma caixa de confirmação
-        int result = JOptionPane.showConfirmDialog(
-                this,
-                "Você tem certeza que deseja sair do sistema?",
-                "Confirmar Logout",
-                JOptionPane.YES_NO_OPTION
-        );
-
-        if (result == JOptionPane.YES_OPTION) {
-            // Cumpre o requisito [RF001] de revogar o acesso no logout
-            this.dispose(); // Fecha a janela principal
-            CeamecApplication.restart(); // Reinicia a aplicação para mostrar a tela de login
-        }
+    // Método auxiliar para criar um painel de boas-vindas simples
+    private JPanel createWelcomePanel() {
+        JPanel welcomePanel = new JPanel(new GridBagLayout());
+        JLabel welcomeLabel = new JLabel("Bem-vindo ao Sistema de Gestão CEAMEC!");
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        welcomePanel.add(welcomeLabel);
+        return welcomePanel;
     }
 }
