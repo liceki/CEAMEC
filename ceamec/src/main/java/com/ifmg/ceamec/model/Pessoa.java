@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+
 @MappedSuperclass
 public abstract class Pessoa {
     @Id

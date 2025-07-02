@@ -26,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         Usuario usuario = usuarioRepository.findByLogin(login)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o e-mail: " + login));
+               .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o e-mail: " + login));
 
         // Como o sistema possui apenas o perfil "Admin", atribuímos esse papel.
         Set<SimpleGrantedAuthority> authorities = Stream.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
