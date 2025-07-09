@@ -1,20 +1,26 @@
 package com.ifmg.ceamec.view;
 
-// Pacote: com.ifmg.ceamec.view
-
+import com.ifmg.ceamec.dto.DoadorRequestDTO;
+import com.ifmg.ceamec.dto.DoadorResumoDTO;
+import com.ifmg.ceamec.dto.EnderecoDTO;
+import com.ifmg.ceamec.service.DoadorService;
 import jakarta.annotation.PostConstruct;
+import jakarta.validation.ConstraintViolationException;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.miginfocom.swing.MigLayout;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class PainelGestaoDoador extends JPanel {
 
-    // --- Componentes da UI ---
+    private final DoadorService doadorService;
+
     private JComboBox<String> comboTipoDoador;
     private JLabel labelNomeRazaoSocial;
     private JTextField campoNomeRazaoSocial;
@@ -23,6 +29,7 @@ public class PainelGestaoDoador extends JPanel {
     private JTextField campoEmail;
     private JTextField campoTelefone;
     private PainelEndereco painelEndereco;
+    @Getter
     private JButton botaoSalvar;
     private JButton botaoLimpar;
 
@@ -31,11 +38,9 @@ public class PainelGestaoDoador extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // -- Painel do Formulário --
         JPanel formPanel = new JPanel(new MigLayout("wrap 2", "[][grow,fill]"));
         formPanel.setBorder(BorderFactory.createTitledBorder("Dados do Doador"));
 
-        // Campos do formulário conforme RF002
         formPanel.add(new JLabel("Tipo de Doador:"));
         comboTipoDoador = new JComboBox<>(new String[]{"Pessoa Física", "Pessoa Jurídica"});
         formPanel.add(comboTipoDoador, "span, growx");
@@ -58,27 +63,22 @@ public class PainelGestaoDoador extends JPanel {
         campoTelefone = new JTextField();
         formPanel.add(campoTelefone, "span, growx");
 
-        // Adiciona o painel de endereço reutilizável
         painelEndereco = new PainelEndereco();
 
-        // -- Painel de Ações --
         JPanel actionsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         botaoLimpar = new JButton("Limpar");
         botaoSalvar = new JButton("Salvar Doador");
         actionsPanel.add(botaoLimpar);
         actionsPanel.add(botaoSalvar);
 
-        // -- Adicionando painéis ao painel principal --
         add(formPanel, BorderLayout.NORTH);
         add(painelEndereco, BorderLayout.CENTER);
         add(actionsPanel, BorderLayout.SOUTH);
 
-        // --- Lógica de Eventos ---
         comboTipoDoador.addActionListener(e -> atualizarLabels());
         botaoSalvar.addActionListener(e -> salvarDoador());
         botaoLimpar.addActionListener(e -> limparCampos());
 
-        // Inicializa os labels
         atualizarLabels();
     }
 
@@ -93,23 +93,40 @@ public class PainelGestaoDoador extends JPanel {
         }
     }
 
-    private void salvarDoador() {
-        // 1. Coletar todos os dados dos campos de texto (incluindo os do painelEndereco).
-        // 2. Criar os DTOs (DoadorRequestDTO e EnderecoDTO).
-        // 3. Chamar o doadorService.salvarNovoDoador(dto) dentro de um bloco try-catch.
-        // 4. Capturar ConstraintViolationException para erros de validação e exibir JOptionPane.
-        // 5. Capturar outras exceções e exibir JOptionPane.
-        // 6. Se tudo der certo, exibir um JOptionPane de sucesso e chamar limparCampos().
-
-        JOptionPane.showMessageDialog(this, "Funcionalidade de Salvar a ser implementada, conectando os campos ao DoadorService.", "Em Desenvolvimento", JOptionPane.INFORMATION_MESSAGE);
+    public Optional<DoadorResumoDTO> salvarDoadorRetornandoResumo() {
+        DoadorRequestDTO dto = criarRequestDTO();
+        try {
+            DoadorResumoDTO salvo = doadorService.salvarNovoDoador(dto);
+            JOptionPane.showMessageDialog(this, "Doador salvo com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            limparCampos();
+            return Optional.of(salvo);
+        } catch (ConstraintViolationException ex) {
+            JOptionPane.showMessageDialog(this, "Dados inválidos: " + ex.getMessage(), "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Erro ao salvar doador: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+        return Optional.empty();
     }
 
-    private void limparCampos() {
-        // Lógica para limpar todos os JTextFields do formulário
+    private void salvarDoador() {
+        salvarDoadorRetornandoResumo();
+    }
+
+    public void limparCampos() {
         campoNomeRazaoSocial.setText("");
         campoCpfCnpj.setText("");
         campoEmail.setText("");
         campoTelefone.setText("");
-        // Limpar campos de endereço...
+        painelEndereco.limparCampos();
+    }
+
+    private DoadorRequestDTO criarRequestDTO() {
+        String nome = campoNomeRazaoSocial.getText().trim();
+        String cpfOuCnpj = campoCpfCnpj.getText().trim();
+        String email = campoEmail.getText().trim();
+        String telefone = campoTelefone.getText().trim();
+        boolean juridico = "Pessoa Jurídica".equals(comboTipoDoador.getSelectedItem());
+        EnderecoDTO enderecoDTO = painelEndereco.getEnderecoDTO();
+        return new DoadorRequestDTO(nome, email, telefone, cpfOuCnpj, juridico, enderecoDTO);
     }
 }
