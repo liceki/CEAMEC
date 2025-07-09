@@ -33,5 +33,18 @@ graph TD
     
     end
     
-        
+    %% --- Estilização ---
+    style objUser fill:#c8e6c9,stroke:#1B5E20
+    style objCrianca fill:#c8e6c9,stroke:#1B5E20
+    style objDoadorF fill:#c8e6c9,stroke:#1B5E20
+    style objDoadorJ fill:#c8e6c9,stroke:#1B5E20
+    
+    style objDoacao1 fill:#FFE0B2,stroke:#E65100
+    style objDoacao2 fill:#FFE0B2,stroke:#E65100
+    style objDoacao3 fill:#FFE0B2,stroke:#E65100
+
+    style objUserEndereco fill:#BBDEFB,stroke:#0D47A1
+    style objCriancaEndereco fill:#BBDEFB,stroke:#0D47A1
+    style objDoadorFEndereco fill:#BBDEFB,stroke:#0D47A1
+    style objDoadorJEndereco fill:#BBDEFB,stroke:#0D47A1
 ```
