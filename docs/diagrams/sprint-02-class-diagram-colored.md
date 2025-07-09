@@ -50,7 +50,9 @@ classDiagram
     class Doacao:::owned {
         -quantidade: double
         -observacoes: String
+        -data: DateTime
         -tipo: TipoDoacao
+    
     }
 
     class TipoDoacao:::enum {
@@ -79,5 +81,5 @@ classDiagram
     classDef entities fill:#C8E6C9,stroke:#1B5E20,stroke-width:2px,color:black
     classDef owned fill:#FFE0B2,stroke:#E65100,stroke-width:2px,color:black
     classDef enum fill:#FFF9C4,stroke:#FFA000,stroke-width:2px,color:black
-    
+
 ```
