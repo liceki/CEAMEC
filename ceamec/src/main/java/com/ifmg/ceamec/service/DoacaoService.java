@@ -8,6 +8,8 @@ import com.ifmg.ceamec.repository.DoadorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class DoacaoService {
@@ -19,7 +21,7 @@ public class DoacaoService {
         Doacao doacao = new Doacao();
         doacao.setQuantidade(dto.quantidade());
         doacao.setObservacoes(dto.observacoes());
-        doacao.setData(dto.data());
+        doacao.setData(LocalDateTime.now());
         doacao.setTipo(dto.tipo());
         Doador doador = doadorRepository.findById(dto.doadorId())
                 .orElseThrow(() -> new IllegalArgumentException("Doador não encontrado"));

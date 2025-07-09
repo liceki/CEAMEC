@@ -8,7 +8,6 @@ public record DoacaoDTO(
         Long id,
         double quantidade,
         String observacoes,
-        LocalDateTime data,
         TipoDoacao tipo,
         Long doadorId
 ) {}
