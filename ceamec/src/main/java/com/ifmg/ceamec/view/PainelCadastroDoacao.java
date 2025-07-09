@@ -2,14 +2,13 @@ package com.ifmg.ceamec.view;
 
 import com.ifmg.ceamec.dto.DoacaoDTO;
 import com.ifmg.ceamec.dto.DoadorResumoDTO;
-import com.ifmg.ceamec.dto.EnderecoDTO;
-import com.ifmg.ceamec.dto.DoadorRequestDTO;
 import com.ifmg.ceamec.model.TipoDoacao;
 import com.ifmg.ceamec.service.DoacaoService;
 import com.ifmg.ceamec.service.DoadorService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import net.miginfocom.swing.MigLayout;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +16,6 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +25,7 @@ public class PainelCadastroDoacao extends JPanel {
 
     private final DoadorService doadorService;
     private final DoacaoService doacaoService;
-    private final PainelGestaoDoador painelGestaoDoador;
+    private final ApplicationContext applicationContext; // injete via construtor
 
     // UI Components
     private JTextField campoBuscaDoador;
@@ -141,15 +139,15 @@ public class PainelCadastroDoacao extends JPanel {
     }
 
     private void abrirDialogCadastroDoador() {
-        // PainelGestaoDoador é o formulário de cadastro
+        PainelGestaoDoador painel = applicationContext.getBean(PainelGestaoDoador.class); // NOVA INSTANCIA
+        painel.limparCampos();
+
         JDialog dialog = new JDialog(SwingUtilities.getWindowAncestor(this), "Novo Doador", Dialog.ModalityType.APPLICATION_MODAL);
-        PainelGestaoDoador painel = painelGestaoDoador;
-        painel.limparCampos(); // Garante que o painel está limpo
         dialog.getContentPane().add(painel);
         dialog.pack();
         dialog.setLocationRelativeTo(this);
 
-        // Substituir o listener padrão do botão salvar por um que fecha o dialog e retorna o doador cadastrado
+        // Remove listeners antigos para evitar múltiplas ações
         for (ActionListener al : painel.getBotaoSalvar().getActionListeners()) {
             painel.getBotaoSalvar().removeActionListener(al);
         }

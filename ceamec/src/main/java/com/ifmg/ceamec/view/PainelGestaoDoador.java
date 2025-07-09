@@ -9,6 +9,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.miginfocom.swing.MigLayout;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
@@ -16,6 +17,7 @@ import java.awt.*;
 import java.util.Optional;
 
 @Component
+@Scope("prototype") // ESSENCIAL: sempre nova instância!
 @RequiredArgsConstructor
 public class PainelGestaoDoador extends JPanel {
 
