@@ -76,7 +76,7 @@ public class CeamecApplication {
                 Usuario admin = new Usuario();
                 admin.setLogin(adminLogin);
                 admin.setEmail(adminLogin);
-                admin.setNomeCompleto("Administrador do Sistema");
+                admin.setNome("Administrador do Sistema");
 
                 // 3. Criptografa a senha padrão antes de salvar
                 admin.setSenhaHash(passwordEncoder.encode("admin123"));
