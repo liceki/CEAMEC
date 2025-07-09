@@ -1,32 +1,23 @@
 package com.ifmg.ceamec.model;
 
-import com.ifmg.ceamec.dto.EnderecoDTO;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import java.time.LocalDate;
+import lombok.*;
 
-@Getter
-@Setter
 
-@MappedSuperclass
+@Getter @Setter @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+@Entity
+@Table(name = "pessoas")
+@Inheritance(strategy = InheritanceType.JOINED) // Estratégia de herança: uma tabela para cada classe
 public abstract class Pessoa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @Column(nullable = false)
-    private String nomeCompleto;
+    private String nome;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    private LocalDate dataNascimento;
-
-    @Column(unique = true)
-    private String cpf;
-
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "endereco_id", referencedColumnName = "id")
     private Endereco endereco;
 }
