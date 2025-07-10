@@ -1,5 +1,5 @@
-1. Cadastro de Doação com possível cadastro de Doador
-```Mermaid
+Cadastro de Doação com possível cadastro de Doador
+```mermaid
 flowchart TD
     INICIO([Início]) --> VERIFICA{Doador já cadastrado?}
     VERIFICA -- Sim --> PREENCHEDOA[Preencher dados da doação]
@@ -10,7 +10,7 @@ flowchart TD
     SALVADOA --> FIM([Fim])
 ```
 2. Cadastro de Doador (único)
-```Mermaid
+```mermaid
 flowchart TD
     INICIO([Início]) --> PREENCHEDOR[Preencher dados do doador]
     PREENCHEDOR --> VALIDACAO{Dados válidos?}
@@ -20,7 +20,7 @@ flowchart TD
     SALVADOR --> FIM([Fim])
 ```
 3. Cadastro de Doação para Doador Existente
-```Mermaid
+```mermaid
 flowchart TD
     INICIO([Início]) --> BUSCA[Buscar doador]
     BUSCA --> SELECIONA{Doador encontrado?}
@@ -34,7 +34,7 @@ flowchart TD
     SALVADOA --> FIM
 ```
 4. Fluxo de Validação de Dados no Cadastro
-```Mermaid
+```mermaid
 flowchart TD
     INICIO([Início do cadastro]) --> PREENCHIMENTO[Usuário preenche formulário]
     PREENCHIMENTO --> VALIDACAO{Dados obrigatórios preenchidos?}
@@ -44,7 +44,7 @@ flowchart TD
     CONTINUA --> FIM([Fim do fluxo])
 ```
 5. Cadastro com Tratamento de Exceção no Banco
-```Mermaid
+```mermaid
 flowchart TD
     INICIO([Início do cadastro]) --> TENTA[Sistema tenta salvar dados]
     TENTA --> SUCESSO{Salvo com sucesso?}
