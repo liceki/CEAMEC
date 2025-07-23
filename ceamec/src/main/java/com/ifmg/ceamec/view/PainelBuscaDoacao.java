@@ -20,9 +20,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
-import java.util.List;
 import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Scope("prototype")
@@ -32,19 +32,16 @@ public class PainelBuscaDoacao extends JPanel {
     private final DoacaoService doacaoService;
     private final DoadorService doadorService;
 
-    // Filtros
     private JSlider sliderQtdMin, sliderQtdMax;
     private JComboBox<TipoDoacao> comboTipos;
     private JTextField campoBuscaDoador;
-    private JButton btnBuscar, btnLimpar;
+    private JButton btnAdicionarDoador, btnRemoverDoador;
+    private DefaultListModel<DoadorResumoDTO> modeloDoadoresSelecionados;
+    private JList<DoadorResumoDTO> listaDoadoresSelecionados;
     private JTable tabelaResultados;
     private JXDatePicker pickerDataInicial, pickerDataFinal;
-    private JList<String> listaSugestaoDoadores;
-    private JScrollPane scrollSugestaoDoadores;
-
-    // Estado interno para autocomplete do doador
-    private List<DoadorResumoDTO> sugestaoDoadores = List.of();
-    private DoadorResumoDTO doadorSelecionado = null;
+    private JPopupMenu popupSugestaoDoadores;
+    private JList<DoadorResumoDTO> listaSugestaoDoadores;
 
     @PostConstruct
     private void initUI() {
@@ -84,77 +81,154 @@ public class PainelBuscaDoacao extends JPanel {
         // Tipo de doação
         painelFiltros.add(new JLabel("Tipo de Doação:"));
         comboTipos = new JComboBox<>(TipoDoacao.values());
-        comboTipos.setSelectedItem(null); // sem filtro padrão
+        comboTipos.setSelectedItem(null);
         painelFiltros.add(comboTipos, "growx, spanx 5");
 
-        // Busca de doador
-        painelFiltros.add(new JLabel("Doador (nome/CPF/CNPJ):"));
+        // Filtro e seleção de doadores
+        painelFiltros.add(new JLabel("Doadores (Nome):"));
         campoBuscaDoador = new JTextField();
-        painelFiltros.add(campoBuscaDoador, "growx, spanx 5");
+        painelFiltros.add(campoBuscaDoador, "growx, spanx 3");
 
-        // Sugestão de doadores (autocomplete)
-        listaSugestaoDoadores = new JList<>();
-        listaSugestaoDoadores.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        scrollSugestaoDoadores = new JScrollPane(listaSugestaoDoadores);
-        scrollSugestaoDoadores.setVisible(false);
-        painelFiltros.add(scrollSugestaoDoadores, "skip 1, spanx 5, growx, h 60!");
+        btnAdicionarDoador = new JButton("Adicionar");
+        painelFiltros.add(btnAdicionarDoador, "spanx 1");
 
-        // Botões
-        btnBuscar = new JButton("Buscar");
-        btnLimpar = new JButton("Limpar Filtros");
-        painelFiltros.add(btnBuscar, "spanx 2, right");
-        painelFiltros.add(btnLimpar, "spanx 4, left");
+        btnRemoverDoador = new JButton("Remover Selecionado");
+        painelFiltros.add(btnRemoverDoador, "spanx 1");
 
-        add(painelFiltros, BorderLayout.NORTH);
+        modeloDoadoresSelecionados = new DefaultListModel<>();
+        listaDoadoresSelecionados = new JList<>(modeloDoadoresSelecionados);
+        listaDoadoresSelecionados.setVisibleRowCount(3);
+        listaDoadoresSelecionados.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> {
+            JLabel label = new JLabel(value.nome() + " (" + value.cpfOuCnpj() + ")");
+            label.setOpaque(true);
+            if (isSelected) {
+                label.setBackground(new Color(184, 207, 229));
+            }
+            return label;
+        });
+        JScrollPane scrollListaDoadores = new JScrollPane(listaDoadoresSelecionados);
+        painelFiltros.add(new JLabel("Selecionados:"));
+        painelFiltros.add(scrollListaDoadores, "spanx 5, growx, h 50!");
 
         // Resultados
         tabelaResultados = new JTable();
         JScrollPane scroll = new JScrollPane(tabelaResultados);
+        add(painelFiltros, BorderLayout.NORTH);
         add(scroll, BorderLayout.CENTER);
 
+        // Popup de sugestão (autocomplete)
+        popupSugestaoDoadores = new JPopupMenu();
+        listaSugestaoDoadores = new JList<>();
+        listaSugestaoDoadores.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listaSugestaoDoadores.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> {
+            JLabel label = new JLabel(value.nome() + " (" + value.cpfOuCnpj() + ")");
+            label.setOpaque(true);
+            if (isSelected) {
+                label.setBackground(new Color(184, 207, 229));
+            }
+            return label;
+        });
+        JScrollPane scrollSugestao = new JScrollPane(listaSugestaoDoadores);
+        scrollSugestao.setPreferredSize(new Dimension(350, 100));
+        popupSugestaoDoadores.add(scrollSugestao);
+
         // Listeners
+        campoBuscaDoador.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { mostrarSugestoes(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { mostrarSugestoes(); }
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { mostrarSugestoes(); }
+        });
+
+
+        listaSugestaoDoadores.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (!e.getOppositeComponent().equals(campoBuscaDoador)) {
+                    SwingUtilities.invokeLater(() -> popupSugestaoDoadores.setVisible(false));
+                }
+            }
+        });
+
+        btnAdicionarDoador.addActionListener(e -> adicionarDoadorSelecionado());
+
+        listaSugestaoDoadores.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    adicionarDoadorSelecionado();
+                }
+            }
+        });
+
+        listaSugestaoDoadores.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    adicionarDoadorSelecionado();
+                }
+            }
+        });
+
+        btnRemoverDoador.addActionListener(e -> {
+            List<DoadorResumoDTO> selecionados = listaDoadoresSelecionados.getSelectedValuesList();
+            for (DoadorResumoDTO d : selecionados) {
+                modeloDoadoresSelecionados.removeElement(d);
+            }
+        });
+
+        // Botões de busca
+        JButton btnBuscar = new JButton("Buscar");
+        JButton btnLimpar = new JButton("Limpar Filtros");
+        painelFiltros.add(btnBuscar, "spanx 2, right");
+        painelFiltros.add(btnLimpar, "spanx 4, left");
+
         btnBuscar.addActionListener(e -> buscarDoacoes());
         btnLimpar.addActionListener(e -> limparFiltros());
-
-        campoBuscaDoador.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            public void changedUpdate(javax.swing.event.DocumentEvent e) { buscarSugestao(); }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) { buscarSugestao(); }
-            public void insertUpdate(javax.swing.event.DocumentEvent e) { buscarSugestao(); }
-        });
-        listaSugestaoDoadores.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && listaSugestaoDoadores.getSelectedIndex() != -1) {
-                String selecionado = listaSugestaoDoadores.getSelectedValue();
-                doadorSelecionado = sugestaoDoadores.get(listaSugestaoDoadores.getSelectedIndex());
-                campoBuscaDoador.setText(selecionado);
-                scrollSugestaoDoadores.setVisible(false);
-            }
-        });
-        campoBuscaDoador.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent e) {
-                scrollSugestaoDoadores.setVisible(false);
-            }
-        });
     }
 
-    private void buscarSugestao() {
-        String termo = campoBuscaDoador.getText().trim();
-        doadorSelecionado = null;
-        if (termo.length() < 2) {
-            scrollSugestaoDoadores.setVisible(false);
+    private void mostrarSugestoes() {
+        String nome = campoBuscaDoador.getText().trim();
+        if (nome.length() < 2) {
+            popupSugestaoDoadores.setVisible(false);
             return;
         }
-        sugestaoDoadores = doadorService.buscarDoadoresPorNome(termo, 0, 100).stream().toList();
-        if (sugestaoDoadores.isEmpty()) {
-            scrollSugestaoDoadores.setVisible(false);
+        List<DoadorResumoDTO> sugestoes = doadorService.buscarDoadoresPorNome(nome, 0, 100).stream().toList();
+        if (sugestoes.isEmpty()) {
+            popupSugestaoDoadores.setVisible(false);
             return;
         }
-        DefaultListModel<String> modelo = new DefaultListModel<>();
-        for (DoadorResumoDTO d : sugestaoDoadores) {
-            modelo.addElement(d.nome() + " (" + d.cpfOuCnpj() + ")");
+        DefaultListModel<DoadorResumoDTO> modelo = new DefaultListModel<>();
+        for (DoadorResumoDTO d : sugestoes) {
+            modelo.addElement(d);
         }
         listaSugestaoDoadores.setModel(modelo);
-        scrollSugestaoDoadores.setVisible(true);
         listaSugestaoDoadores.setSelectedIndex(0);
+
+        // Mostrar popup logo abaixo do campo
+        try {
+            Rectangle rect = campoBuscaDoador.getBounds();
+            popupSugestaoDoadores.setPreferredSize(new Dimension(rect.width, 100));
+            popupSugestaoDoadores.show(campoBuscaDoador, 0, campoBuscaDoador.getHeight());
+        } catch (Exception ex) {
+            popupSugestaoDoadores.show(campoBuscaDoador, 0, campoBuscaDoador.getHeight());
+        }
+        // Importante: dar o foco para permitir navegação via teclado
+        listaSugestaoDoadores.requestFocusInWindow();
+    }
+
+    private void adicionarDoadorSelecionado() {
+        DoadorResumoDTO selecionado = listaSugestaoDoadores.getSelectedValue();
+        if (selecionado != null && !contidoNoModelo(selecionado)) {
+            modeloDoadoresSelecionados.addElement(selecionado);
+        }
+        campoBuscaDoador.setText("");
+        popupSugestaoDoadores.setVisible(false);
+    }
+
+    private boolean contidoNoModelo(DoadorResumoDTO doador) {
+        for (int i = 0; i < modeloDoadoresSelecionados.size(); i++) {
+            if (Objects.equals(modeloDoadoresSelecionados.get(i).id(), doador.id())) return true;
+        }
+        return false;
     }
 
     private void buscarDoacoes() {
@@ -169,7 +243,9 @@ public class PainelBuscaDoacao extends JPanel {
         TipoDoacao tipo = (TipoDoacao) comboTipos.getSelectedItem();
         List<TipoDoacao> tiposSelecionados = tipo == null ? null : List.of(tipo);
 
-        List<Long> doadorIds = (doadorSelecionado != null) ? List.of(doadorSelecionado.id()) : null;
+        List<Long> doadorIds = modeloDoadoresSelecionados.isEmpty() ? null :
+                Collections.list(modeloDoadoresSelecionados.elements()).stream()
+                        .map(DoadorResumoDTO::id).collect(Collectors.toList());
 
         DoacaoFilterDTO filtro = new DoacaoFilterDTO(
                 qtdMin, qtdMax,
@@ -193,7 +269,7 @@ public class PainelBuscaDoacao extends JPanel {
                     d.observacoes(),
                     d.data() != null ? sdf.format(java.sql.Timestamp.valueOf(d.data())) : "",
                     d.doadorNome(),
-                    d.doadorCpfOuCnpj() // ajuste o DTO para ter esse campo!
+                    d.doadorCpfOuCnpj()
             });
         }
         tabelaResultados.setModel(model);
@@ -206,7 +282,7 @@ public class PainelBuscaDoacao extends JPanel {
         pickerDataFinal.setDate(new Date());
         comboTipos.setSelectedItem(null);
         campoBuscaDoador.setText("");
-        doadorSelecionado = null;
+        modeloDoadoresSelecionados.clear();
         tabelaResultados.setModel(new DefaultTableModel(
                 new String[]{"ID", "Quantidade", "Tipo", "Observações", "Data", "Doador Nome", "CPF/CNPJ"}, 0));
     }
