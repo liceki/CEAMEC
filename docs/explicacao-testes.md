@@ -1,3 +1,69 @@
+Com certeza. Este é um excelente exemplo de um teste unitário. Vamos decompô-lo passo a passo, seguindo a estrutura clássica de um teste: **Arrange, Act, Assert**.
+
+O objetivo deste teste é verificar se o método `buscarDoacoes` do `DoacaoService` funciona corretamente quando recebe um filtro para buscar doações com uma quantidade mínima de 10.0 e máxima de 50.0.
+
+-----
+
+### **Passo 1: Arrange (Preparação)**
+
+Nesta fase, preparamos todo o cenário para o teste.
+
+```java
+DoacaoFilterDTO filtro = new DoacaoFilterDTO(10.0, 50.0, null, null, null, null);
+```
+
+  * **O que faz:** Cria um objeto `filtro` que simula os dados que o usuário teria inserido na tela. Estamos dizendo que queremos buscar doações com quantidade entre 10.0 e 50.0, e os outros campos de filtro estão vazios (`null`).
+
+<!-- end list -->
+
+```java
+when(doacaoRepository.findAll(any(Specification.class)))
+        .thenReturn(List.of(doacaoValida));
+```
+
+  * **O que faz:** Esta é a parte mais importante, usando a biblioteca **Mockito**. Estamos "ensinando" o nosso `doacaoRepository` falso (o `@Mock`) como ele deve se comportar. A linha diz:
+      * **`when(...)`**: "QUANDO..."
+      * **`doacaoRepository.findAll(...)`**: "...o método `findAll` do repositório for chamado..."
+      * **`any(Specification.class)`**: "https://www.google.com/search?q=...com QUALQUER objeto do tipo `Specification`..."
+      * **`.thenReturn(...)`**: "...ENTÃO, finja que você foi ao banco de dados e encontrou uma lista contendo apenas o nosso objeto de exemplo `doacaoValida` (que tem a quantidade de 20.0)."
+
+Em resumo, estamos garantindo que, não importa o filtro, o nosso repositório falso sempre retornará uma lista com uma única doação de valor 20.0.
+
+-----
+
+### **Passo 2: Act (Ação)**
+
+Nesta fase, executamos o método que realmente queremos testar.
+
+```java
+List<DoacaoDTO> result = doacaoService.buscarDoacoes(filtro);
+```
+
+  * **O que faz:** Chamamos o método `buscarDoacoes` do `DoacaoService`, passando o `filtro` que criamos. O serviço irá, internamente, criar uma `Specification` e passá-la para o `doacaoRepository.findAll()`. Como nós já programamos o comportamento do repositório, sabemos que ele retornará a lista com o `doacaoValida`. O serviço então pegará essa lista e a converterá para uma lista de DTOs.
+
+-----
+
+### **Passo 3: Assert (Verificação)**
+
+Nesta fase, verificamos se o resultado da ação foi o esperado.
+
+```java
+assertEquals(1, result.size());
+```
+
+  * **O que faz:** Verifica se a lista de DTOs retornada pelo serviço tem **exatamente 1** item. Isso deve ser verdade, pois nosso repositório falso foi programado para retornar uma lista com um único item.
+
+<!-- end list -->
+
+```java
+assertEquals(20.0, result.get(0).quantidade());
+```
+
+  * **O que faz:** Pega o primeiro (e único) item da lista de resultados e verifica se a sua `quantidade` é **exatamente 20.0**. Isso também deve ser verdade, pois o `doacaoValida` que o repositório retornou tem essa quantidade.
+
+Se todas as verificações (`assertEquals`) passarem, o teste é considerado um sucesso, indicando que a orquestração do seu `DoacaoService` para este cenário está funcionando corretamente.
+
+
 
 
 ### 1. **deveFiltrarPorQuantidadeMinimaEMaxima**
