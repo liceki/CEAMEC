@@ -10,7 +10,7 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface DoadorMapper {
 
-    @Mapping(target = "cpfOuCNPJ", expression = "java(getCpfOuCnpj(doador))")
+    @Mapping(target = "cpfOuCnpj", expression = "java(getCpfOuCnpj(doador))")
     DoadorResumoDTO toResumoDTO(Doador doador);
 
     // Mapeia o DTO para entidade, decide o tipo de doador por campo "juridico"

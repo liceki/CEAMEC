@@ -16,13 +16,14 @@ public class MainFrame extends JFrame {
     // --- Injeção de Dependências dos Painéis ---
     private final PainelGestaoDoador painelGestaoDoador;
     private final PainelCadastroDoacao painelCadastroDoacao;
-    // Outros painéis para Sprints futuras podem ser injetados aqui
-    // private final PainelGestaoCrianca painelGestaoCrianca;
+    private final PainelBuscaDoacao painelBuscaDoacao;
 
     // Construtor que recebe os painéis gerenciados pelo Spring
-    public MainFrame(PainelGestaoDoador painelGestaoDoador, PainelCadastroDoacao painelCadastroDoacao) {
+    public MainFrame(PainelGestaoDoador painelGestaoDoador, PainelCadastroDoacao painelCadastroDoacao,
+                     PainelBuscaDoacao painelBuscaDoacao) {
         this.painelGestaoDoador = painelGestaoDoador;
         this.painelCadastroDoacao = painelCadastroDoacao;
+        this.painelBuscaDoacao = painelBuscaDoacao;
 
         this.cardLayout = new CardLayout();
         this.mainPanel = new JPanel(cardLayout);
@@ -39,8 +40,7 @@ public class MainFrame extends JFrame {
         mainPanel.add(createWelcomePanel(), "TELA_INICIAL");
         mainPanel.add(painelGestaoDoador, "PAINEL_DOADORES");
         mainPanel.add(painelCadastroDoacao, "PAINEL_DOACOES");
-        // Outros painéis podem ser adicionados aqui
-        // mainPanel.add(painelGestaoCrianca, "PAINEL_CRIANCAS");
+        mainPanel.add(painelBuscaDoacao, "PAINEL_BUSCA_DOACOES");
 
         setJMenuBar(createMenuBar());
 
@@ -63,6 +63,12 @@ public class MainFrame extends JFrame {
                 e -> cardLayout.show(mainPanel, "PAINEL_DOACOES")
         );
         menuCadastros.add(itemCadastroDoacao);
+
+        JMenuItem itemBuscaDoacao = new JMenuItem("Buscar Doações");
+        itemBuscaDoacao.addActionListener(
+                e -> cardLayout.show(mainPanel, "PAINEL_BUSCA_DOACOES")
+        );
+        menuCadastros.add(itemBuscaDoacao);
 
         // ... aqui viriam outros itens de menu para Crianças, etc.
         // Exemplo:

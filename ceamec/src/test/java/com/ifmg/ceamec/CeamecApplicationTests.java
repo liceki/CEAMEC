@@ -8,6 +8,7 @@ class CeamecApplicationTests {
 
     @Test
     void contextLoads() {
+
     }
 
 }

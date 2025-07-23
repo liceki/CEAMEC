@@ -18,4 +18,6 @@ public abstract class Doador extends Contato {
 
     @OneToMany(mappedBy = "doador", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Doacao> doacoes = new ArrayList<>();
+
+    public abstract String getDocumento();
 }

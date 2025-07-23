@@ -10,4 +10,9 @@ import lombok.*;
 @Table(name = "doadores_fisicos")
 public class DoadorFisico extends Doador {
     private String cpf;
+
+    @Override
+    public String getDocumento() {
+        return cpf;
+    }
 }

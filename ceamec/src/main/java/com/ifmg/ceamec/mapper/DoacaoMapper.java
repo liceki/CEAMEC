@@ -8,6 +8,8 @@ import org.mapstruct.*;
 public interface DoacaoMapper {
 
     @Mapping(source = "doador.id", target = "doadorId")
+    @Mapping(source = "doador.nome", target = "doadorNome")
+    @Mapping(target = "doadorCpfOuCnpj", expression = "java(doacao.getDoador() != null ? doacao.getDoador().getDocumento() : null)")
     DoacaoDTO toDTO(Doacao doacao);
 
     @Mapping(target = "doador", ignore = true)

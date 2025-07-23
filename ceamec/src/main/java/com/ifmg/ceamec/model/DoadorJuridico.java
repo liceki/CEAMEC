@@ -10,4 +10,9 @@ import lombok.*;
 @Table(name = "doadores_juridicos")
 public class DoadorJuridico extends Doador {
     private String cnpj;
+
+    @Override
+    public String getDocumento() {
+        return cnpj;
+    }
 }

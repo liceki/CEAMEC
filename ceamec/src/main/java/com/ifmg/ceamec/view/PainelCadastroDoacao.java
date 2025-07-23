@@ -134,7 +134,7 @@ public class PainelCadastroDoacao extends JPanel {
         int row = tabelaDoadores.getSelectedRow();
         if (row >= 0) {
             doadorSelecionado = tabelaModelDoadores.getDoador(row);
-            labelDoadorSelecionado.setText(doadorSelecionado.nome() + " (" + doadorSelecionado.cpfOuCNPJ() + ")");
+            labelDoadorSelecionado.setText(doadorSelecionado.nome() + " (" + doadorSelecionado.cpfOuCnpj() + ")");
         }
     }
 
@@ -156,7 +156,7 @@ public class PainelCadastroDoacao extends JPanel {
             if (novo.isPresent()) {
                 dialog.dispose();
                 doadorSelecionado = novo.get();
-                labelDoadorSelecionado.setText(doadorSelecionado.nome() + " (" + doadorSelecionado.cpfOuCNPJ() + ")");
+                labelDoadorSelecionado.setText(doadorSelecionado.nome() + " (" + doadorSelecionado.cpfOuCnpj() + ")");
                 buscarDoadores(); // Atualiza tabela (opcional)
             }
         });
@@ -178,7 +178,7 @@ public class PainelCadastroDoacao extends JPanel {
         }
         TipoDoacao tipo = (TipoDoacao) comboTipoDoacao.getSelectedItem();
         String observacoes = campoObservacoes.getText();
-        DoacaoDTO dto = new DoacaoDTO(null, quantidade, observacoes, null, tipo, doadorSelecionado.id());
+        DoacaoDTO dto = new DoacaoDTO(null, quantidade, tipo, observacoes, null, doadorSelecionado.id(), null, null);
         try {
             doacaoService.registrarNovaDoacao(dto);
             JOptionPane.showMessageDialog(this, "Doação registrada com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
@@ -219,7 +219,7 @@ public class PainelCadastroDoacao extends JPanel {
             return switch (columnIndex) {
                 case 0 -> d.id();
                 case 1 -> d.nome();
-                case 2 -> d.cpfOuCNPJ();
+                case 2 -> d.cpfOuCnpj();
                 default -> "";
             };
         }

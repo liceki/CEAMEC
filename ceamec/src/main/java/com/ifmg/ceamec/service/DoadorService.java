@@ -13,6 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class DoadorService {
@@ -23,6 +25,13 @@ public class DoadorService {
         Pageable pageable = PageRequest.of(page, size);
         return doadorRepository.findByNomeStartsWithIgnoreCase(nome, pageable)
                 .map(this::toResumoDTO);
+    }
+
+    public List<DoadorResumoDTO> buscarTodosResumidos() {
+        return doadorRepository.findAll()
+                .stream()
+                .map(this::toResumoDTO)
+                .toList();
     }
 
     public DoadorResumoDTO salvarNovoDoador(@Valid DoadorRequestDTO dto) {
