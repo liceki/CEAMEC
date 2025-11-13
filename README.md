@@ -13,9 +13,9 @@ A aplicação está sendo construída com uma interface de usuário simples e fu
 O sistema visa cobrir as seguintes áreas em seu desenvolvimento:
 
 -   [x] **Autenticação:** Tela de login para acesso administrativo ao sistema.
--   [ ] **Gestão de Doadores:** CRUD (Criar, Ler, Atualizar, Deletar) completo para o cadastro de pessoas físicas e jurídicas que apoiam a ONG.
+-   [x] **Gestão de Doadores:** CRUD (Criar, Ler, Atualizar, Deletar) completo para o cadastro de pessoas físicas e jurídicas que apoiam a ONG.
 -   [ ] **Gestão de Crianças:** Controle de informações das crianças acolhidas, como dados pessoais, data de chegada e situação atual.
--   [ ] **Registro de Doações:** Lançamento de doações recebidas (financeiras ou de itens), vinculando-as a um doador e registrando a data e o tipo de doação.
+-   [x] **Registro de Doações:** Lançamento de doações recebidas (financeiras ou de itens), vinculando-as a um doador e registrando a data e o tipo de doação.
 -   [ ] **Relatórios Simples:** Geração de listas e relatórios básicos (ex: lista de doadores, doações por período).
 
 ## 🛠️ Tecnologias Utilizadas
